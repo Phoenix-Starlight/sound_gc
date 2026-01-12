@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "sound_gc",
+  "version": "${version}",
+  "name": "Sound GC",
+  "description": "This is an example description! Tell everyone what your mod is about!",
+  "authors": [
+    "Me!"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+  "license": "CC0-1.0",
+  "icon": "assets/sound_gc/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "org.fury_phoenix.soundgc.fabric.ExampleModFabric"
+    ],
+    "client": [
+      "org.fury_phoenix.soundgc.fabric.client.ExampleModFabricClient"
+    ]
+  },
+  "mixins": [
+    "sound_gc.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.18.4",
+    "minecraft": "~1.16.5",
+    "java": ">=8",
+    "architectury": ">=1.32.68",
+    "fabric": "*"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
