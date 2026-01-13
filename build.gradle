@@ -29,6 +29,13 @@ subprojects {
         // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
         // See https://docs.gradle.org/current/userguide/declaring_repositories.html
         // for more information about repositories.
+        maven {
+            url = "https://nexus.gtnewhorizons.com/repository/public/"
+            mavenContent {
+                includeGroup "com.github.GTNewHorizons"
+            }
+        }
+
     }
 
     loom {
@@ -38,6 +45,8 @@ subprojects {
     dependencies {
         minecraft "net.minecraft:minecraft:$rootProject.minecraft_version"
         mappings loom.officialMojangMappings()
+        annotationProcessor 'com.github.GTNewHorizons:jabel-javac-plugin:1.0.2-GTNH'
+        compileOnly 'com.github.GTNewHorizons:jabel-javac-plugin:1.0.2-GTNH'
     }
 
     java {
@@ -51,7 +60,15 @@ subprojects {
     }
 
     tasks.withType(JavaCompile).configureEach {
-        it.options.release = 8
+        sourceCompatibility = 21 // for the IDE support
+        options.release = 8
+
+        options.compilerArgs << "-Xlint:-options"
+        options.forkOptions.jvmArgs << "-XX:+EnableDynamicAgentLoading"
+
+        javaCompiler = javaToolchains.compilerFor {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
     }
 
     // Configure Maven publishing.
