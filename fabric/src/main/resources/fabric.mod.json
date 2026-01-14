@@ -14,14 +14,6 @@
   "license": "${license}",
   "icon": "${mod_icon}",
   "environment": "client",
-  "entrypoints": {
-    "main": [
-      "org.fury_phoenix.soundgc.fabric.ExampleModFabric"
-    ],
-    "client": [
-      "org.fury_phoenix.soundgc.fabric.client.ExampleModFabricClient"
-    ]
-  },
   "mixins": [
     "sound_gc.mixins.json"
   ],
