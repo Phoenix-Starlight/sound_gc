@@ -5,6 +5,7 @@ import com.mojang.blaze3d.audio.SoundBuffer;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.fury_phoenix.soundgc.SoundGC;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -18,8 +19,6 @@ public final class Cache implements Map<ResourceLocation, CompletableFuture<Soun
     private final static long SOUND_RETENTION_DURATION = 30;
 
     private final static boolean debug = Boolean.getBoolean("soundgc.debug");
-
-    private final static Logger LOGGER = LogManager.getLogger("SoundGC");
 
     @Desugar
     private record Timestamp<V>(long timestamp, V value) {
@@ -42,7 +41,8 @@ public final class Cache implements Map<ResourceLocation, CompletableFuture<Soun
     }
 
     @Override public CompletableFuture<SoundBuffer> get(Object key) {
-        return map.get(key).value();
+        Timestamp<CompletableFuture<SoundBuffer>> timestamp = map.get(key);
+        return timestamp == null ? null : timestamp.value();
     }
 
     @Override public CompletableFuture<SoundBuffer> put(ResourceLocation key, CompletableFuture<SoundBuffer> value) {
@@ -52,7 +52,7 @@ public final class Cache implements Map<ResourceLocation, CompletableFuture<Soun
                 value
             );
 
-            LOGGER.debug(timestamp);
+            if (debug) SoundGC.LOGGER.debug(timestamp);
 
             map.put(
                 key,
