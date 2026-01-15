@@ -5,9 +5,11 @@ import org.fury_phoenix.soundgc.cache.SoundBufferDuration;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 import javax.sound.sampled.AudioFormat;
 import java.nio.ByteBuffer;
+import java.util.concurrent.TimeUnit;
 
 @Mixin(SoundBuffer.class)
 public abstract class SoundBufferAccessor implements SoundBufferDuration {
@@ -18,8 +20,16 @@ public abstract class SoundBufferAccessor implements SoundBufferDuration {
     @Final
     private AudioFormat format;
 
-    @Override public long sound_gc$milliseconds_duration() {
+    @Unique
+    private final long sound_gc$duration;
+
+    SoundBufferAccessor() {
         int audioSize = data.capacity();
-        return (int) Math.ceil(audioSize / (format.getFrameSize() * format.getFrameRate()) * 1000);
+        float bytesPerSecond = format.getFrameSize() * format.getFrameRate();
+        sound_gc$duration = TimeUnit.MILLISECONDS.toNanos((int) Math.ceil(audioSize / bytesPerSecond * 1000));
+    }
+
+    @Override public long sound_gc$duration() {
+        return sound_gc$duration;
     }
 }

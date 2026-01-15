@@ -20,7 +20,6 @@ public abstract class SoundBufferLibraryMixin {
     @Final
     @Mutable
     private final Map<ResourceLocation, CompletableFuture<SoundBuffer>> cache = Caffeine.newBuilder()
-        .ticker(System::currentTimeMillis)
         .evictionListener(this::sound_gc$onSoundEviction)
         .expireAfter(new SoundExpiryPolicy())
         .buildAsync()

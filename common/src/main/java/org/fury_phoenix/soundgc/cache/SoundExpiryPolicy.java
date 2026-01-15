@@ -15,8 +15,8 @@ public class SoundExpiryPolicy implements Expiry<ResourceLocation, SoundBuffer> 
 
     @Override
     public long expireAfterCreate(@NonNull ResourceLocation key, @NonNull SoundBuffer value, long currentTime) {
-        long expiration = currentTime + ((SoundBufferDuration) value).sound_gc$milliseconds_duration() + TimeUnit.SECONDS.toMillis(SOUNd_RETENTION_DURATION);
-        SoundGC.LOGGER.debug("Current time: {}, Expiration time: {}", currentTime, expiration);
+        long expiration = ((SoundBufferDuration) value).sound_gc$duration() + TimeUnit.SECONDS.toNanos(SOUND_RETENTION_DURATION);
+        SoundGC.LOGGER.debug("Resource Location: {}, Current time: {}, Expiration time: {}", key, currentTime, expiration);
         return expiration;
     }
 
