@@ -14,7 +14,8 @@ import org.spongepowered.asm.mixin.*;
 import java.util.*;
 import java.util.concurrent.*;
 
-@Mixin(SoundBufferLibrary.class) public abstract class SoundBufferLibraryMixin {
+@Mixin(SoundBufferLibrary.class)
+public abstract class SoundBufferLibraryMixin {
     @Shadow
     @Final
     @Mutable
