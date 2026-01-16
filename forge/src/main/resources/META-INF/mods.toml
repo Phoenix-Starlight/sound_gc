@@ -18,18 +18,18 @@ modId = "forge"
 mandatory = true
 versionRange = "[36,)"
 ordering = "NONE"
-side = "BOTH"
+side = "CLIENT"
 
 [[dependencies.sound_gc]]
 modId = "minecraft"
 mandatory = true
 versionRange = "[1.16.5,)"
 ordering = "NONE"
-side = "BOTH"
+side = "CLIENT"
 
 [[dependencies.sound_gc]]
 modId = "architectury"
 mandatory = true
 versionRange = "[1.32.68,)"
 ordering = "AFTER"
-side = "BOTH"
+side = "CLIENT"

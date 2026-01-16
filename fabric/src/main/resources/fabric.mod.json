@@ -11,9 +11,9 @@
     "homepage": "https://fabricmc.net/",
     "sources": "https://github.com/FabricMC/fabric-example-mod"
   },
-  "environment": "*",
   "license": "${license}",
   "icon": "${mod_icon}",
+  "environment": "client",
   "entrypoints": {
     "main": [
       "org.fury_phoenix.soundgc.fabric.ExampleModFabric"
