@@ -1,5 +1,6 @@
 plugins {
     id 'com.gradleup.shadow'
+    id 'io.github.crimix.replace-placeholders' version '3.0'
 }
 
 architectury {
@@ -37,12 +38,11 @@ dependencies {
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
 }
 
-processResources {
-    inputs.property 'version', project.version
 
-    filesMatching('fabric.mod.json') {
-        expand version: inputs.properties.version
-    }
+replaceResourcePlaceholders {
+    enabled true
+    filesToExpand 'fabric.mod.json'
+    extraProperties 'version', 'mod_id'
 }
 
 shadowJar {

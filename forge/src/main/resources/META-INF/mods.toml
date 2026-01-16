@@ -1,17 +1,17 @@
 modLoader = "javafml"
 loaderVersion = "[36,)"
 #issueTrackerURL = ""
-license = "Insert License Here"
+license = "${license}"
 
 [[mods]]
-modId = "sound_gc"
+modId = "${mod_id}"
 version = "${version}"
-displayName = "Sound GC"
-authors = "Me!"
+displayName = "${name}"
+authors = "${author}"
 description = '''
-This is an example description! Tell everyone what your mod is about!
+${description}
 '''
-#logoFile = ""
+logoFile = "${mod_icon}"
 
 [[dependencies.sound_gc]]
 modId = "forge"

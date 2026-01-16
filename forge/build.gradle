@@ -1,5 +1,6 @@
 plugins {
     id 'com.gradleup.shadow'
+    id 'io.github.crimix.replace-placeholders' version '3.0'
 }
 
 loom {
@@ -40,12 +41,10 @@ dependencies {
     shadowBundle project(path: ':common', configuration: 'transformProductionForge')
 }
 
-processResources {
-    inputs.property 'version', project.version
-
-    filesMatching('META-INF/mods.toml') {
-        expand version: inputs.properties.version
-    }
+replaceResourcePlaceholders {
+    enabled true
+    filesToExpand 'META-INF/mods.toml'
+    extraProperties 'version', 'mod_id'
 }
 
 shadowJar {
