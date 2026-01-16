@@ -1,17 +1,30 @@
 package org.fury_phoenix.soundgc.cache;
 
 import com.github.benmanes.caffeine.cache.Expiry;
+import com.github.benmanes.caffeine.cache.RemovalCause;
 import com.mojang.blaze3d.audio.SoundBuffer;
 import net.minecraft.resources.ResourceLocation;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.fury_phoenix.soundgc.SoundGC;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.TimeUnit;
 
 public class SoundExpiryPolicy implements Expiry<ResourceLocation, SoundBuffer> {
 
-    private final static long SOUNd_RETENTION_DURATION = 30;
+    private final static long SOUND_RETENTION_DURATION = 120;
+
+    public static void onSoundEviction(
+        @Nullable ResourceLocation k,
+        @NotNull SoundBuffer buf,
+        RemovalCause cause
+    ) {
+        if (cause != RemovalCause.EXPIRED) return;
+        if (k != null) SoundGC.LOGGER.debug("Evicting {}", k);
+        buf.discardAlBuffer();
+    }
 
     @Override
     public long expireAfterCreate(@NonNull ResourceLocation key, @NonNull SoundBuffer value, long currentTime) {
