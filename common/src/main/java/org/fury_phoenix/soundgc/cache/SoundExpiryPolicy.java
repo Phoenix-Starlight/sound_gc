@@ -8,6 +8,7 @@ import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.fury_phoenix.soundgc.SoundGC;
+import org.fury_phoenix.soundgc.mixin.OpenAlErrorChecker;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.TimeUnit;
@@ -21,6 +22,8 @@ public class SoundExpiryPolicy implements Expiry<ResourceLocation, SoundBuffer> 
         @NotNull SoundBuffer buf,
         RemovalCause cause
     ) {
+        // remove buffer from source somehow, or don't remove if not unqueue'd?
+        OpenAlErrorChecker.sound_gc$checkALError("Flush errors");
         if (cause != RemovalCause.EXPIRED) return;
         if (k != null) SoundGC.LOGGER.debug("Evicting {}", k);
         buf.discardAlBuffer();
