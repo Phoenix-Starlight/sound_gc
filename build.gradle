@@ -40,8 +40,14 @@ subprojects {
 
     loom {
         silentMojangMappingsLicense()
-        log4jConfigs.from(file("../log4j-dev.xml"))
+        log4jConfigs.from(getRootProject().file "log4j.xml")
     }
+
+    runClient.dependsOn(copy {
+        from(rootProject.file "log4j-dev.xml")
+        into(rootProject.projectDir)
+        rename("log4j-dev.xml", "log4j.xml")
+    })
 
     dependencies {
         minecraft "net.minecraft:minecraft:$rootProject.minecraft_version"
