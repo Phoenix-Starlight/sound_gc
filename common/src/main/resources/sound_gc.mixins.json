@@ -6,7 +6,8 @@
   "client": [
     "OpenAlErrorChecker",
     "SoundBufferAccessor",
-    "SoundBufferLibraryMixin"
+    "SoundBufferLibraryMixin",
+    "SoundEngineInitMixin"
   ],
   "mixins": [
   ],
