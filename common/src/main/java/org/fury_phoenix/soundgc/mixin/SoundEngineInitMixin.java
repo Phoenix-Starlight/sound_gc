@@ -4,10 +4,7 @@ import net.minecraft.client.sounds.SoundBufferLibrary;
 import net.minecraft.client.sounds.SoundEngine;
 import org.fury_phoenix.soundgc.clock.AudioTicker;
 import org.fury_phoenix.soundgc.clock.InjectableAudioTicker;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -19,11 +16,12 @@ public class SoundEngineInitMixin {
     private SoundBufferLibrary soundBuffers;
 
     @Unique
-    private final AudioTicker soundgc$audioTicker;
+    private final AudioTicker soundgc$audioTicker = AudioTicker.ticker();
 
-    SoundEngineInitMixin() {
-        this.soundgc$audioTicker = AudioTicker.ticker();
-        ((InjectableAudioTicker)this.soundBuffers).soundgc$setAudioTicker(this.soundgc$audioTicker);
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void injectAudioTicker(CallbackInfo ci)
+    {
+        ((InjectableAudioTicker) soundBuffers).soundgc$setAudioTicker(soundgc$audioTicker);
     }
 
     @Inject(method = "pause", at = @At("RETURN"))
