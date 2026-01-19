@@ -41,6 +41,11 @@ subprojects {
     loom {
         silentMojangMappingsLicense()
         log4jConfigs.from(getRootProject().file "log4j.xml")
+        runClient {
+            javaLauncher = javaToolchains.launcherFor {
+                languageVersion = JavaLanguageVersion.of(17)
+            }
+        }
     }
 
     runClient.dependsOn(copy {
@@ -62,8 +67,8 @@ subprojects {
         // If you remove this line, sources will not be generated.
         withSourcesJar()
 
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaLanguageVersion.of(17)
+        targetCompatibility = JavaLanguageVersion.of(8)
     }
 
     tasks.withType(JavaCompile).configureEach {
