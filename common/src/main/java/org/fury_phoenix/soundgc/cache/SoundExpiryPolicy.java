@@ -3,11 +3,13 @@ package org.fury_phoenix.soundgc.cache;
 import com.github.benmanes.caffeine.cache.Expiry;
 import com.github.benmanes.caffeine.cache.RemovalCause;
 import com.mojang.blaze3d.audio.SoundBuffer;
+import net.minecraft.client.sounds.ChannelAccess;
 import net.minecraft.resources.ResourceLocation;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.fury_phoenix.soundgc.SoundGC;
+import org.fury_phoenix.soundgc.mixin.ChannelBufferUnbinder;
 import org.fury_phoenix.soundgc.mixin.OpenAlErrorChecker;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,11 +19,23 @@ public class SoundExpiryPolicy implements Expiry<ResourceLocation, SoundBuffer> 
 
     private final static long SOUND_RETENTION_DURATION = 120;
 
-    public static void onSoundEviction(
+    public interface InjectableChannelAccess {
+        void soundgc$setChannelAccess(ChannelAccess channelAccess);
+    }
+
+    private ChannelAccess channelAccess;
+
+    public void setChannelAccess(ChannelAccess channelAccess) {
+        this.channelAccess = channelAccess;
+    }
+
+    public void onSoundEviction(
         @Nullable ResourceLocation k,
         @NotNull SoundBuffer buf,
         RemovalCause cause
     ) {
+        var handle = channelAccess.createHandle(Library.Pool.STATIC).join();
+        handle.execute(c -> ((ChannelBufferUnbinder) c).soundgc$unbindUsedBuffers());
         // remove buffer from source somehow, or don't remove if not unqueue'd?
         OpenAlErrorChecker.sound_gc$checkALError("Flush errors");
         if (cause != RemovalCause.EXPIRED) return;
