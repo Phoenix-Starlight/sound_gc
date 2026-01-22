@@ -48,11 +48,13 @@ subprojects {
         }
     }
 
-    runClient.dependsOn(copy {
-        from(rootProject.file "log4j-dev.xml")
-        into(rootProject.projectDir)
-        rename("log4j-dev.xml", "log4j.xml")
-    })
+    tasks.register("copyLogConfig", CopyIfChangedOrMissing) {
+        srcFile(rootProject.file "log4j-dev.xml")
+        destDir rootProject.projectDir
+        outFile "log4j.xml"
+    }
+
+    runClient.dependsOn(tasks.named("copyLogConfig"))
 
     dependencies {
         minecraft "net.minecraft:minecraft:$rootProject.minecraft_version"
@@ -98,6 +100,30 @@ subprojects {
             // Notice: This block does NOT have the same function as the block in the top level.
             // The repositories here will be used for publishing your artifact, not for
             // retrieving dependencies.
+        }
+    }
+}
+
+class CopyIfChangedOrMissing extends DefaultTask {
+    @InputFile
+    def srcFile
+
+    @Input
+    def destDir
+
+    @Optional @Input
+    def outFile
+
+    CopyIfChangedOrMissing() {
+        outputs.upToDateWhen { new File( project.file( destDir ), srcFile.name ).exists() }
+    }
+
+    @TaskAction
+    void doCopy() {
+        project.copy {
+            from srcFile
+            into destDir
+            rename(srcFile, outFile ?: srcFile)
         }
     }
 }
