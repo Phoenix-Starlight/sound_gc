@@ -9,7 +9,10 @@ import org.fury_phoenix.soundgc.cache.SoundExpiryPolicy;
 import org.fury_phoenix.soundgc.cache.SoundExpiryPolicy.InjectableChannelAccess;
 import org.fury_phoenix.soundgc.clock.AudioTicker;
 import org.fury_phoenix.soundgc.clock.InjectableAudioTicker;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -24,13 +27,17 @@ public abstract class SoundBufferLibraryMixin implements InjectableAudioTicker, 
 
     @Shadow
     @Final
-    @Mutable
-    private final Map<ResourceLocation, CompletableFuture<SoundBuffer>> cache = Caffeine.newBuilder()
-        .ticker(() -> soundgc$audioTicker == null ? 0 : soundgc$audioTicker.read())
-        .expireAfter(soundgc$policy)
-        .evictionListener(soundgc$policy::onSoundEviction)
-        .buildAsync()
-        .asMap();
+    private Map<ResourceLocation, CompletableFuture<SoundBuffer>> cache;
+
+    @Redirect(method = "<init>", at = @At(value = "FIELD", target = "Lnet/minecraft/client/sounds/SoundBufferLibrary;cache:Ljava/util/Map;", opcode = Opcodes.PUTFIELD))
+    private void initCache(SoundBufferLibrary instance, Map<ResourceLocation, CompletableFuture<SoundBuffer>> value) {
+        this.cache = Caffeine.newBuilder()
+            .ticker(() -> this.soundgc$audioTicker == null ? 0 : this.soundgc$audioTicker.read())
+            .expireAfter(this.soundgc$policy)
+            .evictionListener(this.soundgc$policy::onSoundEviction)
+            .buildAsync()
+            .asMap();
+    }
 
     @Override
     @Unique
