@@ -27,6 +27,7 @@ public abstract class SoundBufferLibraryMixin implements InjectableAudioTicker, 
 
     @Shadow
     @Final
+    @Mutable
     private Map<ResourceLocation, CompletableFuture<SoundBuffer>> cache;
 
     @Redirect(method = "<init>", at = @At(value = "FIELD", target = "Lnet/minecraft/client/sounds/SoundBufferLibrary;cache:Ljava/util/Map;", opcode = Opcodes.PUTFIELD))
