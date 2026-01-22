@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration name="Dev" monitorInterval="60">
+<Configuration name="Dev" monitorInterval="60" xmlns="https://logging.apache.org/xml/ns"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="
+                   https://logging.apache.org/xml/ns
+                   https://logging.apache.org/xml/ns/log4j-config-2.xsd">
     <Loggers>
-        <Logger name="SoundGC" level="debug" additivity="false">
-            <AppenderRef ref="SysOut" />
-            <AppenderRef ref="ServerGuiConsole" />
+        <Logger name="org.fury_phoenix.soundgc" additivity="false" level="DEBUG">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="SysOut"/>
+            <AppenderRef ref="ServerGuiConsole"/>
         </Logger>
     </Loggers>
 </Configuration>
