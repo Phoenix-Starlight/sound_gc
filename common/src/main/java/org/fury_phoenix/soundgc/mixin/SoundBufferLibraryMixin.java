@@ -1,13 +1,13 @@
 package org.fury_phoenix.soundgc.mixin;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.Ticker;
 import com.mojang.blaze3d.audio.SoundBuffer;
 import net.minecraft.client.sounds.ChannelAccess;
 import net.minecraft.client.sounds.SoundBufferLibrary;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.resources.ResourceLocation;
 import org.fury_phoenix.soundgc.cache.SoundExpiryPolicy;
-import org.fury_phoenix.soundgc.clock.AudioTicker;
 import org.fury_phoenix.soundgc.injection.InjectableSoundBufferLibrary;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.*;
@@ -20,7 +20,7 @@ import java.util.concurrent.*;
 @Mixin(SoundBufferLibrary.class)
 public abstract class SoundBufferLibraryMixin implements InjectableSoundBufferLibrary {
     @Unique
-    private AudioTicker soundgc$audioTicker;
+    private Ticker soundgc$audioTicker;
 
     @Unique
     private final SoundExpiryPolicy soundgc$policy = new SoundExpiryPolicy();
@@ -42,7 +42,7 @@ public abstract class SoundBufferLibraryMixin implements InjectableSoundBufferLi
 
     @Override
     @Unique
-    public void soundgc$setAudioTicker(AudioTicker audioTicker) {
+    public void soundgc$setAudioTicker(Ticker audioTicker) {
         soundgc$audioTicker = audioTicker;
     }
 
