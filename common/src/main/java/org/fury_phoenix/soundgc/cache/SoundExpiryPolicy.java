@@ -42,8 +42,7 @@ public class SoundExpiryPolicy implements Expiry<ResourceLocation, SoundBuffer> 
         // remove buffer from source somehow, or don't remove if not unqueue'd?
         if (!cause.wasEvicted()) return;
         OpenAlErrorChecker.sound_gc$checkALError("Flush errors");
-        var handle = channelAccess.createHandle(Library.Pool.STATIC).join();
-        handle.execute(c -> ((ChannelBufferUnbinder) c).soundgc$unbindUsedBuffers());
+        channelAccess.executeOnChannels(stream -> stream.forEach(c -> ((ChannelBufferUnbinder)c).soundgc$unbindUsedBuffers()));
         LOGGER.debug(EVICTION, "Evicting {}", k);
         buf.discardAlBuffer();
     }
