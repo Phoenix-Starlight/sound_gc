@@ -4,11 +4,11 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.mojang.blaze3d.audio.SoundBuffer;
 import net.minecraft.client.sounds.ChannelAccess;
 import net.minecraft.client.sounds.SoundBufferLibrary;
+import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.resources.ResourceLocation;
 import org.fury_phoenix.soundgc.cache.SoundExpiryPolicy;
-import org.fury_phoenix.soundgc.cache.SoundExpiryPolicy.InjectableChannelAccess;
 import org.fury_phoenix.soundgc.clock.AudioTicker;
-import org.fury_phoenix.soundgc.clock.InjectableAudioTicker;
+import org.fury_phoenix.soundgc.injection.InjectableSoundBufferLibrary;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 @Mixin(SoundBufferLibrary.class)
-public abstract class SoundBufferLibraryMixin implements InjectableAudioTicker, InjectableChannelAccess {
+public abstract class SoundBufferLibraryMixin implements InjectableSoundBufferLibrary {
     @Unique
     private AudioTicker soundgc$audioTicker;
 
@@ -46,9 +46,15 @@ public abstract class SoundBufferLibraryMixin implements InjectableAudioTicker, 
         soundgc$audioTicker = audioTicker;
     }
 
+    @Override
     @Unique
     public void soundgc$setChannelAccess(ChannelAccess channelAccess) {
         soundgc$policy.setChannelAccess(channelAccess);
+    }
+
+    @Override
+    @Unique
+    public void soundgc$setSoundManager(SoundManager soundManager) {
     }
 
 }

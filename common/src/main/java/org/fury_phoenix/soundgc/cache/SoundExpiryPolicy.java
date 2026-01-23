@@ -28,10 +28,6 @@ public class SoundExpiryPolicy implements Expiry<ResourceLocation, SoundBuffer> 
 
     private final static Marker TIMESTAMP = MarkerManager.getMarker("TIMESTAMP");
 
-    public interface InjectableChannelAccess {
-        void soundgc$setChannelAccess(ChannelAccess channelAccess);
-    }
-
     private ChannelAccess channelAccess;
 
     public void setChannelAccess(ChannelAccess channelAccess) {
