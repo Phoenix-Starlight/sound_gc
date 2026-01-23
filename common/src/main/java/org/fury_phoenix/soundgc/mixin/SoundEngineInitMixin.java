@@ -3,6 +3,7 @@ package org.fury_phoenix.soundgc.mixin;
 import net.minecraft.client.sounds.ChannelAccess;
 import net.minecraft.client.sounds.SoundBufferLibrary;
 import net.minecraft.client.sounds.SoundEngine;
+import net.minecraft.client.sounds.SoundManager;
 import org.fury_phoenix.soundgc.clock.AudioTicker;
 import org.fury_phoenix.soundgc.injection.InjectableSoundBufferLibrary;
 import org.spongepowered.asm.mixin.*;
@@ -20,6 +21,10 @@ public class SoundEngineInitMixin {
     @Final
     private ChannelAccess channelAccess;
 
+    @Shadow
+    @Final
+    private SoundManager soundManager;
+
     @Unique
     private final AudioTicker soundgc$audioTicker = AudioTicker.ticker();
 
@@ -29,6 +34,7 @@ public class SoundEngineInitMixin {
         var buffers = (InjectableSoundBufferLibrary) soundBuffers;
         buffers.soundgc$setAudioTicker(soundgc$audioTicker);
         buffers.soundgc$setChannelAccess(channelAccess);
+        buffers.soundgc$setSoundManager(soundManager);
     }
 
     @Inject(method = "pause", at = @At("RETURN"))
