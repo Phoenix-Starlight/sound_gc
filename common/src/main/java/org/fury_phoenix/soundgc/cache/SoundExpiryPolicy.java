@@ -3,24 +3,21 @@ package org.fury_phoenix.soundgc.cache;
 import com.github.benmanes.caffeine.cache.Expiry;
 import com.github.benmanes.caffeine.cache.RemovalCause;
 import com.mojang.blaze3d.audio.SoundBuffer;
-import net.minecraft.client.sounds.ChannelAccess;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-import org.checkerframework.checker.index.qual.NonNegative;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.fury_phoenix.soundgc.mixin.ChannelBufferUnbinder;
 import org.fury_phoenix.soundgc.mixin.OpenAlErrorChecker;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class SoundExpiryPolicy implements Expiry<ResourceLocation, SoundBuffer> {
 
-    private final static long SOUND_RETENTION_DURATION = 120;
+    private final static long SOUND_RETENTION_DURATION = 5;
 
     private final static Logger LOGGER = LogManager.getLogger();
 
@@ -28,49 +25,62 @@ public class SoundExpiryPolicy implements Expiry<ResourceLocation, SoundBuffer> 
 
     private final static Marker TIMESTAMP = MarkerManager.getMarker("TIMESTAMP");
 
-    private ChannelAccess channelAccess;
+    private ResourceLocation reading;
 
-    public void setChannelAccess(ChannelAccess channelAccess) {
-        this.channelAccess = channelAccess;
+    public void startRead(ResourceLocation location) {
+        reading = location;
+    }
+
+    public void endRead() {
+        reading = null;
     }
 
     public void onSoundEviction(
-        @Nullable ResourceLocation k,
+        @NotNull ResourceLocation k,
         @NotNull SoundBuffer buf,
-        RemovalCause cause
+        RemovalCause cause,
+        Map<ResourceLocation, CompletableFuture<SoundBuffer>> cache
     ) {
-        // remove buffer from source somehow, or don't remove if not unqueue'd?
-        if (!cause.wasEvicted()) return;
+        LOGGER.debug(EVICTION, "Delete cache entry {}", k);
+
+        if (!cause.wasEvicted() || k.equals(reading)) return;
+
         OpenAlErrorChecker.sound_gc$checkALError("Flush errors");
-        channelAccess.executeOnChannels(stream -> stream.forEach(c -> ((ChannelBufferUnbinder)c).soundgc$unbindUsedBuffers()));
-        LOGGER.debug(EVICTION, "Evicting {}", k);
+        LOGGER.debug(EVICTION, "Destroy {}, cause {}", k, cause);
+        cache.remove(k);
         buf.discardAlBuffer();
     }
 
     @Override
-    public long expireAfterCreate(@NonNull ResourceLocation key, @NonNull SoundBuffer value, long currentTime) {
+    public long expireAfterCreate(@NotNull ResourceLocation key, @NotNull SoundBuffer value, long currentTime) {
+        return calculateExpiration(key, value, currentTime, "CREATE");
+    }
+
+    private long calculateExpiration(ResourceLocation key, SoundBuffer value, long currentTime, String mode) {
+        LOGGER.debug(TIMESTAMP, mode);
         long expiration = ((SoundBufferDuration) value).sound_gc$duration() + TimeUnit.SECONDS.toNanos(SOUND_RETENTION_DURATION);
-        LOGGER.debug(TIMESTAMP, "Resource Location: {}, Current time: {}, Expiration time: {}", key, currentTime, expiration);
-        return expiration;
+        long ticksExpiration = TimeUnit.NANOSECONDS.toSeconds(expiration) * 20;
+        LOGGER.debug(TIMESTAMP, "Resource Location: {}, Current time: {}, Expiration time: {}", key, currentTime, ticksExpiration);
+        return ticksExpiration;
     }
 
     @Override
     public long expireAfterUpdate(
-        @NonNull ResourceLocation key,
-        @NonNull SoundBuffer value,
+        @NotNull ResourceLocation key,
+        @NotNull SoundBuffer value,
         long currentTime,
-        @NonNegative long currentDuration
+        long currentDuration
     ) {
-        return expireAfterCreate(key, value, currentTime);
+        return calculateExpiration(key, value, currentTime, "UPDATE");
     }
 
     @Override
     public long expireAfterRead(
-        @NonNull ResourceLocation key,
-        @NonNull SoundBuffer value,
+        @NotNull ResourceLocation key,
+        @NotNull SoundBuffer value,
         long currentTime,
-        @NonNegative long currentDuration
+        long currentDuration
     ) {
-        return expireAfterCreate(key, value, currentTime);
+        return calculateExpiration(key, value, currentTime, "READ");
     }
 }

@@ -1,44 +1,43 @@
 package org.fury_phoenix.soundgc.mixin;
 
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.Ticker;
+import com.github.benmanes.caffeine.cache.*;
 import com.mojang.blaze3d.audio.SoundBuffer;
-import net.minecraft.client.sounds.ChannelAccess;
+import net.minecraft.Util;
 import net.minecraft.client.sounds.SoundBufferLibrary;
-import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.resources.ResourceLocation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.fury_phoenix.soundgc.cache.SoundExpiryPolicy;
 import org.fury_phoenix.soundgc.injection.InjectableSoundBufferLibrary;
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.*;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.*;
 import java.util.concurrent.*;
 
 @Mixin(SoundBufferLibrary.class)
 public abstract class SoundBufferLibraryMixin implements InjectableSoundBufferLibrary {
+    @Shadow
+    @Final
+    private Map<ResourceLocation, CompletableFuture<SoundBuffer>> cache;
+
     @Unique
     private Ticker soundgc$audioTicker;
 
     @Unique
     private final SoundExpiryPolicy soundgc$policy = new SoundExpiryPolicy();
 
-    @Shadow
-    @Final
-    @Mutable
-    private Map<ResourceLocation, CompletableFuture<SoundBuffer>> cache;
+    @Unique
+    private final Map<ResourceLocation, CompletableFuture<SoundBuffer>> soundgc$cache = Caffeine.newBuilder()
+        .ticker(() -> this.soundgc$audioTicker == null ? 0 : this.soundgc$audioTicker.read())
+        .expireAfter(soundgc$policy)
+        .evictionListener((k, v, c) -> soundgc$policy.onSoundEviction(k, v, c, cache))
+        .executor(Util.backgroundExecutor())
+        .buildAsync()
+        .asMap();
 
-    @Redirect(method = "<init>", at = @At(value = "FIELD", target = "Lnet/minecraft/client/sounds/SoundBufferLibrary;cache:Ljava/util/Map;", opcode = Opcodes.PUTFIELD))
-    private void initCache(SoundBufferLibrary instance, Map<ResourceLocation, CompletableFuture<SoundBuffer>> value) {
-        this.cache = Caffeine.newBuilder()
-            .ticker(() -> this.soundgc$audioTicker == null ? 0 : this.soundgc$audioTicker.read())
-            .expireAfter(this.soundgc$policy)
-            .evictionListener(this.soundgc$policy::onSoundEviction)
-            .buildAsync()
-            .asMap();
-    }
+    SoundBufferLibraryMixin() {}
 
     @Override
     @Unique
@@ -46,15 +45,23 @@ public abstract class SoundBufferLibraryMixin implements InjectableSoundBufferLi
         soundgc$audioTicker = audioTicker;
     }
 
-    @Override
     @Unique
-    public void soundgc$setChannelAccess(ChannelAccess channelAccess) {
-        soundgc$policy.setChannelAccess(channelAccess);
-    }
+    private static final Logger soundgc$LOGGER = LogManager.getLogger();
+
+    @Unique
+    private static final Marker soundgc$MARKER = MarkerManager.getMarker("SOUNDS");
+
+    @Shadow public abstract CompletableFuture<SoundBuffer> getCompleteBuffer(ResourceLocation arg);
 
     @Override
     @Unique
-    public void soundgc$setSoundManager(SoundManager soundManager) {
+    public void soundgc$cacheSoundBuffer(ResourceLocation location) {
+        soundgc$LOGGER.debug(soundgc$MARKER, "Caching sound {}", location);
+        soundgc$policy.startRead(location);
+        soundgc$cache.compute(location, (k, v) -> {
+            soundgc$LOGGER.debug(soundgc$MARKER, "COMPUTE");
+            return v == null ? getCompleteBuffer(k) : v;
+        });
+        soundgc$policy.endRead();
     }
-
 }
