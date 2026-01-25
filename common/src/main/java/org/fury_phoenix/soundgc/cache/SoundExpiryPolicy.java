@@ -46,7 +46,7 @@ public class SoundExpiryPolicy implements Expiry<ResourceLocation, SoundBuffer> 
         if (!cause.wasEvicted() || k.equals(reading)) return;
 
         OpenAlErrorChecker.sound_gc$checkALError("Flush errors");
-        LOGGER.debug(EVICTION, "Destroy {}, cause {}", k, cause);
+        LOGGER.debug(EVICTION, "Destroy {}", k);
         cache.remove(k);
         buf.discardAlBuffer();
     }
