@@ -28,14 +28,15 @@ public abstract class SoundBufferLibraryMixin implements InjectableSoundBufferLi
     @Unique
     private final SoundExpiryPolicy soundgc$policy = new SoundExpiryPolicy();
 
+    @Shadow public abstract CompletableFuture<SoundBuffer> getCompleteBuffer(ResourceLocation arg);
+
     @Unique
-    private final Map<ResourceLocation, CompletableFuture<SoundBuffer>> soundgc$cache = Caffeine.newBuilder()
+    private final AsyncLoadingCache<ResourceLocation, SoundBuffer> soundgc$cache = Caffeine.newBuilder()
         .ticker(() -> this.soundgc$audioTicker == null ? 0 : this.soundgc$audioTicker.read())
         .expireAfter(soundgc$policy)
         .evictionListener((k, v, c) -> soundgc$policy.onSoundEviction(k, v, c, cache))
         .executor(Util.backgroundExecutor())
-        .buildAsync()
-        .asMap();
+        .buildAsync((k, e) -> getCompleteBuffer(k));
 
     SoundBufferLibraryMixin() {}
 
@@ -51,17 +52,12 @@ public abstract class SoundBufferLibraryMixin implements InjectableSoundBufferLi
     @Unique
     private static final Marker soundgc$MARKER = MarkerManager.getMarker("SOUNDS");
 
-    @Shadow public abstract CompletableFuture<SoundBuffer> getCompleteBuffer(ResourceLocation arg);
-
     @Override
     @Unique
     public void soundgc$cacheSoundBuffer(ResourceLocation location) {
         soundgc$LOGGER.debug(soundgc$MARKER, "Caching sound {}", location);
         soundgc$policy.startRead(location);
-        soundgc$cache.compute(location, (k, v) -> {
-            soundgc$LOGGER.debug(soundgc$MARKER, "COMPUTE");
-            return v == null ? getCompleteBuffer(k) : v;
-        });
+        soundgc$cache.get(location);
         soundgc$policy.endRead();
     }
 }
