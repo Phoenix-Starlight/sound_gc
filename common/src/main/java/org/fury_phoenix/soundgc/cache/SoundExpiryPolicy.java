@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 public class SoundExpiryPolicy implements Expiry<ResourceLocation, SoundBuffer> {
 
-    private final static long SOUND_RETENTION_DURATION = 5;
+    private final static long SOUND_RETENTION_DURATION = 360;
 
     private final static Logger LOGGER = LogManager.getLogger();
 
@@ -59,9 +59,9 @@ public class SoundExpiryPolicy implements Expiry<ResourceLocation, SoundBuffer> 
     private long calculateExpiration(ResourceLocation key, SoundBuffer value, long currentTime, String mode) {
         LOGGER.debug(TIMESTAMP, mode);
         long expiration = ((SoundBufferDuration) value).sound_gc$duration() + TimeUnit.SECONDS.toNanos(SOUND_RETENTION_DURATION);
-        long ticksExpiration = TimeUnit.NANOSECONDS.toSeconds(expiration) * 20;
-        LOGGER.debug(TIMESTAMP, "Resource Location: {}, Current time: {}, Expiration time: {}", key, currentTime, ticksExpiration);
-        return ticksExpiration;
+        long expirationInTicks = TimeUnit.NANOSECONDS.toSeconds(expiration) * 20;
+        LOGGER.debug(TIMESTAMP, "Resource Location: {}, Current time: {}, Expiration time: {}", key, currentTime, expirationInTicks);
+        return expirationInTicks;
     }
 
     @Override
