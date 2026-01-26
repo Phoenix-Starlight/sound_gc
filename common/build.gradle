@@ -27,6 +27,9 @@ dependencies {
 shadowJar {
     configurations = [project.configurations.shadowBundle]
     archiveClassifier = 'shadow'
+    include("*.jar")
+    include("**/*.class")
+    minimize()
 }
 
 jar {
