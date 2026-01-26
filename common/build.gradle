@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 architectury {
     common rootProject.enabled_platforms.split(',')
     injectInjectables = false
@@ -18,15 +20,28 @@ dependencies {
     shadowBundle(implementation "com.github.ben-manes.caffeine:caffeine:2.9.3")
 }
 
+abstract class ReflectionShadowJar extends ShadowJar {}
+
+// Includes select reflection accessed classes
+tasks.register('shadowReflected', ReflectionShadowJar) {
+    configurations = [project.configurations.shadowBundle]
+    archiveClassifier = 'reflected'
+    include "*.jar"
+    include "**/SSA.class"
+}
+
 shadowJar {
     configurations = [project.configurations.shadowBundle]
     archiveClassifier = 'shadow'
-    include("*.jar")
-    include("**/*.class")
+    dependencies {
+        exclude(dependency("com.google.errorprone:.*:.*"))
+        exclude(dependency("org.checkerframework.*:.*:.*"))
+    }
     minimize()
 }
 
 jar {
     from(zipTree shadowJar.archiveFile)
+    from(zipTree shadowReflected.archiveFile)
     duplicatesStrategy DuplicatesStrategy.EXCLUDE
 }
