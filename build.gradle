@@ -50,9 +50,9 @@ subprojects {
     }
 
     tasks.register("copyLogConfig", CopyIfChangedOrMissing) {
-        srcFile(rootProject.file "log4j-dev.xml")
-        destDir rootProject.projectDir
-        outFile "log4j.xml"
+        srcFile = rootProject.file "log4j-dev.xml"
+        destDir = rootProject.projectDir
+        outFile = "log4j.xml"
     }
 
     runClient.dependsOn(tasks.named("copyLogConfig"))

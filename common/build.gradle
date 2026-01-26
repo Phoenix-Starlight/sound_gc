@@ -46,5 +46,5 @@ shadowJar {
 jar {
     from(zipTree shadowJar.archiveFile)
     from(zipTree shadowReflected.archiveFile)
-    duplicatesStrategy DuplicatesStrategy.EXCLUDE
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
