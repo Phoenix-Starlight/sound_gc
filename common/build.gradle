@@ -30,7 +30,8 @@ tasks.register('shadowReflected', ReflectionShadowJar) {
     configurations = [project.configurations.shadowBundle]
     archiveClassifier = 'reflected'
     include "*.jar"
-    include "**/SSA.class"
+    include "**/??.class"
+    include "**/???.class"
 }
 
 shadowJar {
