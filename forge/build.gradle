@@ -1,5 +1,4 @@
 plugins {
-    id 'com.gradleup.shadow'
     id 'io.github.crimix.replace-placeholders' version '3.0'
 }
 
