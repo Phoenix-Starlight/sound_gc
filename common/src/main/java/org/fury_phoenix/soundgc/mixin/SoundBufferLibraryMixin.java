@@ -13,8 +13,8 @@ import org.fury_phoenix.soundgc.cache.SoundExpiryPolicy;
 import org.fury_phoenix.soundgc.injection.InjectableSoundBufferLibrary;
 import org.spongepowered.asm.mixin.*;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @Mixin(SoundBufferLibrary.class)
 public abstract class SoundBufferLibraryMixin implements InjectableSoundBufferLibrary {
