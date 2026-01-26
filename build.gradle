@@ -4,13 +4,15 @@ plugins {
     id 'com.gradleup.shadow' version '8.3.6'
 }
 
-architectury {
-    minecraft = project.minecraft_version
-}
 
 allprojects {
+    apply plugin: "architectury-plugin"
     group = rootProject.maven_group
     version = rootProject.mod_version
+    architectury {
+        minecraft = project.minecraft_version
+        compileOnly()
+    }
 }
 
 subprojects {
@@ -22,6 +24,17 @@ subprojects {
     base {
         // Set up a suffixed format for the mod jar names, e.g. `example-fabric`.
         archivesName = "$rootProject.mod_id-$project.name"
+    }
+
+    if (project.path != ':common') {
+        loom {
+            mods {
+                main { // to match the default mod generated for Forge
+                    sourceSet project.sourceSets.main
+                    sourceSet project(':common').sourceSets.main
+                }
+            }
+        }
     }
 
     repositories {
