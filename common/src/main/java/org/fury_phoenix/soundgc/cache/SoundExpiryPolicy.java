@@ -58,7 +58,7 @@ public class SoundExpiryPolicy implements Expiry<ResourceLocation, SoundBuffer> 
 
     private long calculateExpiration(ResourceLocation key, SoundBuffer value, long currentTime, String mode) {
         LOGGER.debug(TIMESTAMP, mode);
-        long expiration = ((SoundBufferDuration) value).sound_gc$duration() + TimeUnit.SECONDS.toNanos(SOUND_RETENTION_DURATION);
+        long expiration = value.sound_gc$duration() + TimeUnit.SECONDS.toNanos(SOUND_RETENTION_DURATION);
         long expirationInTicks = TimeUnit.NANOSECONDS.toSeconds(expiration) * 20;
         LOGGER.debug(TIMESTAMP, "Resource Location: {}, Current time: {}, Expiration time: {}", key, currentTime, expirationInTicks);
         return expirationInTicks;

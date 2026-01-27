@@ -1,5 +1,6 @@
 {
   "injected_interfaces": {
-    "net/minecraft/client/sounds/SoundBufferLibrary": ["org/fury_phoenix/soundgc/injection/InjectableSoundBufferLibrary"]
+    "net/minecraft/client/sounds/SoundBufferLibrary": ["org/fury_phoenix/soundgc/injection/InjectableSoundBufferLibrary"],
+    "com/mojang/blaze3d/audio/SoundBuffer": ["org/fury_phoenix/soundgc/cache/SoundBufferDuration"]
   }
 }
