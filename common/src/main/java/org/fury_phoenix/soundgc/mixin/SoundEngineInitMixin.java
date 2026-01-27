@@ -23,18 +23,16 @@ public class SoundEngineInitMixin {
     @Inject(method = "<init>", at = @At("RETURN"))
     private void injectAudioTicker(CallbackInfo ci)
     {
-        var buffers = (InjectableSoundBufferLibrary) soundBuffers;
-        buffers.soundgc$setAudioTicker(() -> this.tickCount);
+        soundBuffers.soundgc$setAudioTicker(() -> this.tickCount);
     }
 
     @ModifyArg(method = "tickNonPaused", at = @At(value = "INVOKE", target = "Ljava/util/Map;remove(Ljava/lang/Object;)Ljava/lang/Object;"))
     private Object cacheSound(Object key) {
         var instance = (SoundInstance) key;
-        var library = (InjectableSoundBufferLibrary) soundBuffers;
         Sound sound = instance.getSound();
         // We want to manage sound effects which are unmanaged, not music (streamed)
         if (sound.shouldStream()) return key;
-        library.soundgc$cacheSoundBuffer(sound.getPath());
+        soundBuffers.soundgc$cacheSoundBuffer(sound.getPath());
         return key;
     }
 
