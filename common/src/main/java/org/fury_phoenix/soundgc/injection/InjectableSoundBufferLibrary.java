@@ -4,8 +4,7 @@ import com.github.benmanes.caffeine.cache.Ticker;
 import net.minecraft.resources.ResourceLocation;
 
 public interface InjectableSoundBufferLibrary {
+    default void soundgc$setAudioTicker(Ticker audioTicker) { throw new AssertionError(); }
 
-    void soundgc$setAudioTicker(Ticker audioTicker);
-
-    void soundgc$cacheSoundBuffer(ResourceLocation location);
+    default void soundgc$cacheSoundBuffer(ResourceLocation location) { throw new AssertionError(); }
 }
