@@ -95,9 +95,6 @@ subprojects {
         // if it is present.
         // If you remove this line, sources will not be generated.
         withSourcesJar()
-
-        sourceCompatibility = JavaLanguageVersion.of(17)
-        targetCompatibility = JavaLanguageVersion.of(8)
     }
 
     tasks.withType(JavaCompile).configureEach {
