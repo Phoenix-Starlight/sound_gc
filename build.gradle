@@ -1,12 +1,12 @@
 plugins {
-    id "dev.architectury.loom" version "1.13.467" apply false
-    id "architectury-plugin" version "3.4.162"
-    id "com.gradleup.shadow" version "8.3.6"
+    id ("dev.architectury.loom") version "1.13.467" apply false
+    id ("architectury-plugin") version "3.4.162"
+    id ("com.gradleup.shadow") version "8.3.6"
 }
 
 
 allprojects {
-    apply plugin: "architectury-plugin"
+    apply(plugin: "architectury-plugin")
     group = rootProject.maven_group
     version = rootProject.mod_version
     architectury {
@@ -16,9 +16,9 @@ allprojects {
 }
 
 subprojects {
-    apply plugin: "dev.architectury.loom"
-    apply plugin: "maven-publish"
-    apply plugin: "com.gradleup.shadow"
+    apply(plugin: "dev.architectury.loom")
+    apply(plugin: "maven-publish")
+    apply(plugin: "com.gradleup.shadow")
 
     base {
         // Set up a suffixed format for the mod jar names, e.g. `example-fabric`.
@@ -43,8 +43,8 @@ subprojects {
         loom {
             mods {
                 main { // to match the default mod generated for Forge
-                    sourceSet project.sourceSets.main
-                    sourceSet project(":common").sourceSets.main
+                    sourceSet(project.sourceSets.main)
+                    sourceSet(project(":common").sourceSets.main)
                 }
             }
         }
@@ -59,7 +59,7 @@ subprojects {
         maven {
             url = "https://nexus.gtnewhorizons.com/repository/public/"
             mavenContent {
-                includeGroup "com.github.GTNewHorizons"
+                includeGroup("com.github.GTNewHorizons")
             }
         }
 
@@ -67,7 +67,7 @@ subprojects {
 
     loom {
         silentMojangMappingsLicense()
-        log4jConfigs.from(getRootProject().file "log4j.xml")
+        log4jConfigs.from(getRootProject().file("log4j.xml"))
         runClient {
             javaLauncher = javaToolchains.launcherFor {
                 languageVersion = JavaLanguageVersion.of(17)
@@ -76,7 +76,7 @@ subprojects {
     }
 
     tasks.register("copyLogConfig", CopyIfChangedOrMissing) {
-        srcFile = rootProject.file "log4j-dev.xml"
+        srcFile = rootProject.file("log4j-dev.xml")
         destDir = rootProject.projectDir
         outFile = "log4j.xml"
     }
@@ -84,10 +84,10 @@ subprojects {
     runClient.dependsOn(tasks.named("copyLogConfig"))
 
     dependencies {
-        minecraft "net.minecraft:minecraft:$rootProject.minecraft_version"
-        mappings loom.officialMojangMappings()
-        annotationProcessor "com.github.GTNewHorizons:jabel-javac-plugin:1.0.2-GTNH"
-        compileOnly "com.github.GTNewHorizons:jabel-javac-plugin:1.0.2-GTNH"
+        minecraft("net.minecraft:minecraft:$rootProject.minecraft_version")
+        mappings(loom.officialMojangMappings())
+        annotationProcessor("com.github.GTNewHorizons:jabel-javac-plugin:1.0.2-GTNH")
+        compileOnly("com.github.GTNewHorizons:jabel-javac-plugin:1.0.2-GTNH")
     }
 
     java {
@@ -114,7 +114,7 @@ subprojects {
         publications {
             mavenJava(MavenPublication) {
                 artifactId = base.archivesName.get()
-                from components.java
+                from(components.java)
             }
         }
 
@@ -145,8 +145,8 @@ class CopyIfChangedOrMissing extends DefaultTask {
     @TaskAction
     void doCopy() {
         project.copy {
-            from srcFile
-            into destDir
+            from(srcFile)
+            into(destDir)
             rename(srcFile, outFile ?: srcFile)
         }
     }
