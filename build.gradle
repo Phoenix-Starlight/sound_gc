@@ -25,7 +25,21 @@ subprojects {
         archivesName = "$rootProject.mod_id-$project.name"
     }
 
-    if (project.path != ':common') {
+    configurations {
+        // Files in this configuration will be bundled into your mod using the Shadow plugin.
+        // Don't use the `shadow` configuration from the plugin itself as it's meant for excluding files.
+        shadowBundle {
+            canBeResolved = true
+            canBeConsumed = false
+        }
+    }
+
+    shadowJar {
+        configurations = [project.configurations.shadowBundle]
+        archiveClassifier = 'shadow'
+    }
+
+        if (project.path != ':common') {
         loom {
             mods {
                 main { // to match the default mod generated for Forge
