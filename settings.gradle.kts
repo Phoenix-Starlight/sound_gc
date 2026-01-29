@@ -10,6 +10,7 @@ pluginManagement {
 
 rootProject.name = "sound_gc"
 
+includeBuild("build-logic")
 include("common")
 include("fabric")
 include("forge")
