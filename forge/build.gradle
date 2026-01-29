@@ -2,15 +2,15 @@ plugins {
     id 'io.github.crimix.replace-placeholders' version '3.0'
 }
 
+architectury {
+    platformSetupLoomIde()
+    forge()
+}
+
 loom {
     forge {
         mixinConfig "sound_gc.mixins.json"
     }
-}
-
-architectury {
-    platformSetupLoomIde()
-    forge()
 }
 
 configurations {
