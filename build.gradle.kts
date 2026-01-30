@@ -5,17 +5,20 @@ plugins {
     id ("soundgc.convention") apply false
 }
 
+val maven_group: String by rootProject
+val mod_version: String by rootProject
+val minecraft_version: String by rootProject
 
 allprojects {
-    apply(plugin: "architectury-plugin")
-    group = rootProject.maven_group
-    version = rootProject.mod_version
+    apply(plugin="architectury-plugin")
+    group = maven_group
+    version = mod_version
     architectury {
-        minecraft = rootProject.minecraft_version
+        minecraft = minecraft_version
         compileOnly()
     }
 }
 
 subprojects {
-    apply(plugin: "soundgc.convention")
+    apply(plugin="soundgc.convention")
 }
