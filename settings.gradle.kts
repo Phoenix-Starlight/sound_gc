@@ -12,5 +12,5 @@ rootProject.name = "sound_gc"
 
 includeBuild("build-logic")
 include("common")
-include("fabric")
+//include("fabric")
 include("forge")
