@@ -2,7 +2,6 @@ package org.fury_phoenix.soundgc.mixin;
 
 import com.github.benmanes.caffeine.cache.*;
 import com.mojang.blaze3d.audio.SoundBuffer;
-import net.minecraft.Util;
 import net.minecraft.client.sounds.SoundBufferLibrary;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;

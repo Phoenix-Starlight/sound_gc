@@ -10,6 +10,7 @@
     "SoundEngineInitMixin"
   ],
   "mixins": [
+    "UtilAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
