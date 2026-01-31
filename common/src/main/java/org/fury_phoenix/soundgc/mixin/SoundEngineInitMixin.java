@@ -19,7 +19,7 @@ public class SoundEngineInitMixin {
     @Shadow
     private int tickCount;
 
-    @Inject(method = "<init>", at = @At("RETURN"))
+    @Inject(method = "<init>*", at = @At("RETURN"))
     private void injectAudioTicker(CallbackInfo ci)
     {
         soundBuffers.soundgc$setAudioTicker(() -> this.tickCount);
