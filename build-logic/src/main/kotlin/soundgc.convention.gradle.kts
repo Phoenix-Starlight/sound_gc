@@ -8,11 +8,12 @@ plugins {
     `maven-publish`
 }
 
+val mod_id: String by rootProject
 val minecraft_version: String by rootProject
 
 base {
     // Set up a suffixed format for the mod jar names, e.g. `example-fabric`.
-    archivesName = "$rootProject.mod_id-$project.name+$minecraft_version"
+    archivesName = "$mod_id-${project.name}+$minecraft_version"
 }
 
 // Files in this configuration will be bundled into your mod using the Shadow plugin.
