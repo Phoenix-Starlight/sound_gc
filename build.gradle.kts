@@ -1,7 +1,5 @@
 plugins {
-    id ("dev.architectury.loom") version "1.13.467" apply false
     id ("architectury-plugin") version "3.4.162"
-    id ("com.gradleup.shadow") version "8.3.6"
     id ("soundgc.convention") apply false
 }
 

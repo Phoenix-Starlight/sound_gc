@@ -14,4 +14,12 @@ dependencies {
     implementation("dev.architectury.loom:dev.architectury.loom.gradle.plugin:1.13.467")
     implementation("architectury-plugin:architectury-plugin.gradle.plugin:3.4.162")
     implementation("com.gradleup.shadow:com.gradleup.shadow.gradle.plugin:8.3.6")
+    constraints {
+        implementation("net.fabricmc:tiny-remapper") {
+            because("Remaps wildcard targets; breaks cross version mixin target")
+            version {
+                require("0.12.3")
+            }
+        }
+    }
 }
