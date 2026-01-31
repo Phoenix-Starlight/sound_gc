@@ -35,7 +35,7 @@ public abstract class SoundBufferLibraryMixin implements InjectableSoundBufferLi
         .ticker(() -> this.soundgc$audioTicker == null ? 0 : this.soundgc$audioTicker.read())
         .expireAfter(soundgc$policy)
         .evictionListener((k, v, c) -> soundgc$policy.onSoundEviction(k, v, c, cache))
-        .executor(Util.backgroundExecutor())
+        .executor(UtilAccessor.executor())
         .buildAsync((k, e) -> getCompleteBuffer(k));
 
     SoundBufferLibraryMixin() {}
