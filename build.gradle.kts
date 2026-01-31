@@ -12,7 +12,7 @@ val minecraft_version: String by rootProject
 allprojects {
     apply(plugin="architectury-plugin")
     group = maven_group
-    version = mod_version
+    version = "$mod_version+$minecraft_version"
     architectury {
         minecraft = minecraft_version
         compileOnly()
