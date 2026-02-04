@@ -73,8 +73,6 @@ tasks.runClient.configure {
 dependencies {
     minecraft("net.minecraft:minecraft:$minecraft_version")
     mappings(loom.officialMojangMappings())
-    annotationProcessor("com.github.GTNewHorizons:jabel-javac-plugin:1.0.2-GTNH")
-    compileOnly("com.github.GTNewHorizons:jabel-javac-plugin:1.0.2-GTNH")
 }
 
 java {
@@ -85,15 +83,7 @@ java {
 }
 
 tasks.withType<JavaCompile>().configureEach {
-    sourceCompatibility = "21" // for the IDE support
-    options.release = 8
-
-    options.compilerArgs.add("-Xlint:-options")
-    options.forkOptions.jvmArgs = listOf("-XX:+EnableDynamicAgentLoading")
-
-    javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
+    options.release = 17 // for the IDE support
 }
 
 // Configure Maven publishing.
