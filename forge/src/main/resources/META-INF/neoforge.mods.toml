@@ -18,7 +18,7 @@ features = { java_version = "17"}
 [[dependencies.${mod_id}]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.20.2,)"
+versionRange = "[1.20.2, 1.21.5]"
 ordering = "NONE"
 side = "CLIENT"
 
