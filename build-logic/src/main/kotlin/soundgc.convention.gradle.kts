@@ -83,7 +83,7 @@ java {
 }
 
 tasks.withType<JavaCompile>().configureEach {
-    options.release = 17
+    options.release = 21
 }
 
 // Configure Maven publishing.
