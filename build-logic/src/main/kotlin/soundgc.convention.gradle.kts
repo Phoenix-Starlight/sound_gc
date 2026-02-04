@@ -65,7 +65,7 @@ val copyLogConfig by tasks.register<CopyIfChangedOrMissing>("copyLogConfig") {
 
 tasks.runClient.configure {
     javaLauncher = javaToolchains.launcherFor {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(21)
     }
     dependsOn(copyLogConfig)
 }
