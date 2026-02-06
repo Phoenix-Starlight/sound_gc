@@ -25,7 +25,7 @@ public class SoundEngineInitMixin {
         soundBuffers.soundgc$setAudioTicker(() -> this.tickCount);
     }
 
-    @ModifyArg(method = "tickNonPaused", at = @At(value = "INVOKE", target = "Ljava/util/Map;remove(Ljava/lang/Object;)Ljava/lang/Object;"))
+    @ModifyArg(method = "tickInGameSound", at = @At(value = "INVOKE", target = "Ljava/util/Map;remove(Ljava/lang/Object;)Ljava/lang/Object;"))
     private Object cacheSound(Object key) {
         var instance = (SoundInstance) key;
         Sound sound = instance.getSound();
