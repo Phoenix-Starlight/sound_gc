@@ -52,15 +52,11 @@ repositories {
     }
 }
 
+val copyLogConfig by rootProject.tasks.named<CopyIfChangedOrMissing>("copyLogConfig")
+
 loom {
     silentMojangMappingsLicense()
-    log4jConfigs.from(getRootProject().file("log4j.xml"))
-}
-
-val copyLogConfig by tasks.register<CopyIfChangedOrMissing>("copyLogConfig") {
-    srcFile = rootProject.file("log4j-dev.xml")
-    destDir = rootProject.projectDir
-    outFile = rootProject.file("log4j.xml")
+    log4jConfigs.from(copyLogConfig.outFile)
 }
 
 tasks.runClient.configure {
@@ -108,22 +104,23 @@ abstract class CopyIfChangedOrMissing: DefaultTask() {
     @get:InputFile
     abstract val srcFile: RegularFileProperty
 
-    @get:InputDirectory
-    abstract val destDir: DirectoryProperty
+//    @get:InputDirectory
+//    abstract val destDir: DirectoryProperty
 
-    @get:Optional @get:InputFile
+    @get:OutputFile
     abstract val outFile: RegularFileProperty
 
     init {
-        outputs.upToDateWhen { destDir.get().file(srcFile.get().asFile.name).asFile.exists() }
+        outputs.upToDateWhen { outFile.get().asFile.exists() }
     }
 
     @TaskAction
     fun doCopy() {
-        project.copy {
-            from(srcFile)
-            into(destDir)
-            rename(srcFile.get().asFile.name, outFile.orElse(srcFile).get().asFile.name)
-        }
+        srcFile.get().asFile.copyTo(outFile.get().asFile)
+//        project.copy {
+//            from(srcFile)
+//            into(destDir)
+//            rename(srcFile.get().asFile.name, outFile.orElse(srcFile).get().asFile.name)
+//        }
     }
 }
