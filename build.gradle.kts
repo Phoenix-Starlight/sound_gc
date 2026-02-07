@@ -17,7 +17,7 @@ allprojects {
     }
 }
 
-val copyLogConfig by tasks.register<Soundgc_convention_gradle.CopyIfChangedOrMissing>("copyLogConfig") {
+val copyLogConfig by tasks.register<CopyIfChangedOrMissing>("copyLogConfig") {
     srcFile = rootProject.file("log4j-dev.xml")
     outFile = rootProject.layout.projectDirectory.dir("run").file("log4j.xml")
 }
