@@ -99,28 +99,3 @@ publishing {
         // retrieving dependencies.
     }
 }
-
-abstract class CopyIfChangedOrMissing: DefaultTask() {
-    @get:InputFile
-    abstract val srcFile: RegularFileProperty
-
-//    @get:InputDirectory
-//    abstract val destDir: DirectoryProperty
-
-    @get:OutputFile
-    abstract val outFile: RegularFileProperty
-
-    init {
-        outputs.upToDateWhen { outFile.get().asFile.exists() }
-    }
-
-    @TaskAction
-    fun doCopy() {
-        srcFile.get().asFile.copyTo(outFile.get().asFile)
-//        project.copy {
-//            from(srcFile)
-//            into(destDir)
-//            rename(srcFile.get().asFile.name, outFile.orElse(srcFile).get().asFile.name)
-//        }
-    }
-}

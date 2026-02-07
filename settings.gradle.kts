@@ -14,3 +14,4 @@ includeBuild("build-logic")
 include("common")
 include("fabric")
 include("forge")
+project(":forge").name = "neoforge"
