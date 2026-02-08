@@ -30,7 +30,7 @@ dependencies {
 
 replaceResourcePlaceholders {
     enabled true
-    filesToExpand 'META-INF/neoforge.mods.toml'
+    filesToExpand('META-INF/neoforge.mods.toml', 'META-INF/mods.toml')
     extraProperties 'version', 'mod_id'
 }
 
