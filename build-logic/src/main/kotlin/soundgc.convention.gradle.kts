@@ -82,6 +82,12 @@ tasks.withType<JavaCompile>().configureEach {
     options.release = 21
 }
 
+tasks.processResources {
+    filesMatching(listOf("**/*.toml", "*.json")) {
+        expand(properties + properties.filter { it.key.contains("placeholder.") }.mapKeys { it.key.removePrefix("placeholder.")})
+    }
+}
+
 // Configure Maven publishing.
 publishing {
     publications {
